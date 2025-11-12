@@ -1,8 +1,5 @@
 from math import *
-
-
 unitv = ( (1,0,0), (0,1,0), (0,0,1) )
-
 
 def mag(a):
 	return sqrt(a[0]**2 + a[1]**2 + a[2]**2)

@@ -11,7 +11,10 @@ def eval_csv(msg, as_tup=False):
 	except:pass
 	return eval('('+kb_str_input+')') if as_tup else eval('['+kb_str_input+']')
 
-def rnd(n, m=5):return round(n, m)
+def rnd(n, m=5):
+	if isinstance(n,complex):
+		return complex(rnd(n.real),rnd(n.imag))
+	return round(n,m)
 
 def run():
 	cont=True

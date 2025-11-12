@@ -1,5 +1,6 @@
 from math import sqrt,exp,pi,degrees,atan,e
 
+
 def get_opt_num(msg):
 	opt=0.0
 	try:opt+=float(input(msg))
@@ -13,12 +14,15 @@ def eval_csv(msg, as_tup=False):
 	except:pass
 	return eval('('+kb_str_input+')') if as_tup else eval('['+kb_str_input+']')
 
-def rnd(n, m=5):return round(n, m)
+def rnd(n, m=5):
+	if isinstance(n,complex):
+		return complex(rnd(n.real),rnd(n.imag))
+	return round(n,m)
 
 def run():
 	cont=True
 	while cont:
-		opt=int(get_opt_num("Circuit Ops::1-LCWork|2-LCEq|3-Time: "))
+		opt=int(get_opt_num("Circuit Ops::1-LCWork|2-LCEq|3-Time|4-PhasorSameFreq: "))
 		if opt==1:
 			subopt=int(get_opt_num("WorkEq::0-GoBack|1-C|2-L: "))
 			if subopt!=1 and subopt!=2:continue
@@ -29,7 +33,7 @@ def run():
 		elif opt==2:
 			subopt=int(get_opt_num("DiffEq::0-GoBack|1-RC|2-RL: "))
 			if subopt!=1 and subopt!=2:continue
-			vals=eval_csv("enter x0, xf: ")
+			vals=eval_csv("enter x0+, xf: ")
 			if len(vals)<2:continue
 			tcs=eval_csv("enter ohms, {}: ".format("farads" if subopt==1 else "henries"))
 			if len(tcs)<2:continue
@@ -52,7 +56,7 @@ def run():
 				else:eq="{:g} + {:g}*e**-(t / {:g})".format(x1f, x1o-x1f, tc)
 				print("X(t) =",eq)
 		elif opt==3:
-			subopt=int(get_opt_num("Time::0-GoBack|1-FreqRC/RL|2-Vrms|3-X(T)|4-PhAng-dT|5-PhAngRC/RL: "))
+			subopt=int(get_opt_num("Time::0-GoBack|1-FreqRC/RL|2-Vrms|3-X(Tau)|4-PhAng-dT|5-PhAngRC/RL: "))
 			if subopt==1:
 				tc=get_opt_num("enter time-const: ")
 				print("freq = {:g}Hz".format( rnd(1/(10.58661*tc)) ))
@@ -80,5 +84,9 @@ def run():
 				x=-2.0*pi*vals[0]*vals[1]*vals[2] if circopt==1 else (2.0*pi*vals[1]*vals[2])/vals[0]
 				print("Ph-Angle = {:g} degs".format(degrees(atan(x))))
 			else:continue
+		elif opt==4:
+			ampl=get_opt_num("enter amplitude: ")
+			ang=get_opt_num("enter phase angle: ")
+			
 		cont=len(input("restart?: "))>0
 run()
