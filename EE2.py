@@ -1,5 +1,4 @@
-from math import sqrt,exp,pi,degrees,atan,e
-
+import math
 
 def get_opt_num(msg):
 	opt=0.0
@@ -7,29 +6,24 @@ def get_opt_num(msg):
 	except:pass
 	return opt
 
-def eval_csv(msg, as_tup=False):
-	kb_str_input=input(msg)
-	do_rand=0
-	try:do_rand=int(kb_str_input)
-	except:pass
-	return eval('('+kb_str_input+')') if as_tup else eval('['+kb_str_input+']')
+def eval_csv(msg):
+	return eval('['+input(msg)+']')
 
 def rnd(n, m=5):
 	if isinstance(n,complex):
-		return complex(rnd(n.real),rnd(n.imag))
+		return complex(round(n.real,m),round(n.imag,m))
 	return round(n,m)
 
 def run():
 	cont=True
 	while cont:
-		opt=int(get_opt_num("Circuit Ops::1-LCWork|2-LCEq|3-Time|4-PhasorSameFreq: "))
+		opt=int(get_opt_num("Circuit Ops::1-LCWork|2-LCEq|3-Time: "))
 		if opt==1:
 			subopt=int(get_opt_num("WorkEq::0-GoBack|1-C|2-L: "))
-			if subopt!=1 and subopt!=2:continue
+			if subopt!=1 and subopt!=2: continue
 			vals=eval_csv("enter {}: ".format("farads, volts" if subopt==1 else "henries, current"))
-			if len(vals)<2:continue
-			nrgy=0.5*vals[0]*vals[1]
-			print("w = 0.5*{}^2 = {:g}".format("C*v" if subopt==1 else "L*i",nrgy))
+			if len(vals)<2: continue
+			print("w = 0.5*{}^2 = {:g}".format("C*v" if subopt==1 else "L*i",0.5*vals[0]*(vals[1]**2)))
 		elif opt==2:
 			subopt=int(get_opt_num("DiffEq::0-GoBack|1-RC|2-RL: "))
 			if subopt!=1 and subopt!=2:continue
@@ -63,30 +57,22 @@ def run():
 			elif subopt==2:
 				waveopt=int(get_opt_num("Waves::0-GoBack|1-Sq|2-Sin|3-Tri: "))
 				v_max=get_opt_num("enter Vmax: ")
-				rut=1
-				if waveopt==2:rut+=1
-				elif waveopt==3:rut+=2
-				print("Vrms = {:g}".format(v_max/sqrt(rut)))
+				print("Vrms = {:g}".format(v_max/math.sqrt(waveopt)))
 			elif subopt==3:
 				vals=eval_csv("enter x0,xf: ")
-				if len(vals)<2:continue
-				diff=vals[0]-vals[1]
-				print("X(Tau) = {:g} + {:g}*e^-1 = {:g}".format(vals[1],diff,vals[1]+(diff*exp(-1))))
+				if len(vals)<2: continue
+				print("X(Tau) = {:g} + {:g}*e^-1 = {:g}".format(vals[1],(vals[0]-vals[1]),vals[1]+((vals[0]-vals[1])*math.exp(-1))))
 			elif subopt==4:
 				vals=eval_csv("enter freq, time-delay: ")
 				if len(vals)<2:continue
 				print("Ph-Angle = {:g} degs".format(vals[0]*vals[1]*360.0))
 			elif subopt==5:
 				circopt=int(get_opt_num("Time::0-GoBack|1-RC|2-RL: "))
-				if circopt==0:continue
+				if circopt==0: continue
 				vals=eval_csv("enter ohms, {}, freq: ".format("farads" if circopt==1 else "henries"))
-				if len(vals)<3:continue
-				x=-2.0*pi*vals[0]*vals[1]*vals[2] if circopt==1 else (2.0*pi*vals[1]*vals[2])/vals[0]
-				print("Ph-Angle = {:g} degs".format(degrees(atan(x))))
+				if len(vals)<3: continue
+				x=-2.0*math.pi*vals[0]*vals[1]*vals[2] if circopt==1 else (2.0*math.pi*vals[1]*vals[2])/vals[0]
+				print("Ph-Angle = {:g} degs".format(math.degrees(math.atan(x))))
 			else:continue
-		elif opt==4:
-			ampl=get_opt_num("enter amplitude: ")
-			ang=get_opt_num("enter phase angle: ")
-			
 		cont=len(input("restart?: "))>0
 run()

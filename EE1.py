@@ -4,12 +4,8 @@ def get_opt_num(msg):
 	except:pass
 	return opt
 
-def eval_csv(msg, as_tup=False):
-	kb_str_input=input(msg)
-	do_rand=0
-	try:do_rand=int(kb_str_input)
-	except:pass
-	return eval('('+kb_str_input+')') if as_tup else eval('['+kb_str_input+']')
+def eval_csv(msg):
+	return eval('['+input(msg)+']')
 
 def rnd(n, m=5):
 	if isinstance(n,complex):
@@ -28,8 +24,7 @@ def run():
 			for r in rs:
 				r_eq+=r
 			for i in range(len(rs)):
-				r_v=(rs[i]/r_eq)*v
-				print("v{} = (R_i/R_eq)*V = ({:g}/{:g})*{:g} = {:g}".format(i+1,rnd(rs[i]),rnd(r_eq),rnd(v),rnd(r_v)))
+				print("v{} = (R_i/R_eq)*V = ({:g}/{:g})*{:g} = {:g}".format(i+1,rnd(rs[i]),rnd(r_eq),rnd(v),rnd((rs[i]/r_eq)*v)))
 		elif opt==2:
 			# current divider
 			c=get_opt_num("enter current: ")
@@ -39,8 +34,7 @@ def run():
 				r_eq+=1/r
 			r_eq=1/r_eq
 			for i in range(len(rs)):
-				r_c=(r_eq/rs[i])*c
-				print("i{} = (R_eq/R_i)*i = ({:g}/{:g})*{:g} = {:g}".format(i+1,rnd(rs[i]),rnd(r_eq),rnd(c),rnd(r_c)))
+				print("i{} = (R_eq/R_i)*i = ({:g}/{:g})*{:g} = {:g}".format(i+1,rnd(rs[i]),rnd(r_eq),rnd(c),rnd((r_eq/rs[i])*c)))
 		elif opt==3:
 			# delta-to-Y/pi-to-T
 			subopt = int(get_opt_num("Delta-To-Y::1-R|2-C|3-L: "))
@@ -67,7 +61,7 @@ def run():
 			# parallel resistors.
 			rs=eval_csv("enter parallel Rs: ")
 			r_eq=0.0
-			if len(rs)==2:r_eq=(rs[0]*rs[1])/(rs[0]+rs[1])
+			if len(rs)==2: r_eq=(rs[0]*rs[1])/(rs[0]+rs[1])
 			else:
 				for r in rs:r_eq+=1/r
 				r_eq=1/r_eq

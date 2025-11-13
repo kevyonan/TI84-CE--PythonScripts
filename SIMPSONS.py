@@ -1,19 +1,17 @@
-from math import *
+import math
 
 def simpsons(f, a, b):
 	return ((b-a)/6.0) * (f(a) + (4*f((a+b) / 2.0)) + f(b))
 
 def simpsons_iter(f, a, b, steps):
-	h = (b - a) / steps;
 	result = f(a) + f(b);
-	
 	for i in range(1, steps, 2):
-		result += 4.0 * f(a + i * h)
+		result += 4.0 * f(a + i * ((b - a) / steps))
 	
 	for i in range(1, steps-1, 2):
-		result += 2.0 * f(a + i * h)
+		result += 2.0 * f(a + i * ((b - a) / steps))
 	
-	return result * h / 3.0;
+	return result * ((b - a) / steps) / 3.0;
 
 def run():
 	cont = True
@@ -26,10 +24,8 @@ def run():
 			c += int(input('how many steps?: '))
 		
 		f = eval('lambda X: ' + input('write Python func: '))
-		if c > 0:
-			print(simpsons_iter(f, a, b, c))
-		else:
-			print(simpsons(f, a, b))
+		if c > 0: print(simpsons_iter(f, a, b, c))
+		else: print(simpsons(f, a, b))
 		
 		reply = input('restart? (1-yes/0-no): ')
 		cont = len(reply) > 0 and reply[0]=='1'

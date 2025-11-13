@@ -16,10 +16,9 @@ def combination(n, k):
 '''
 
 def factor_quadratic(coeffs):
-	half=0.5
 	b_half=(coeffs[1]/coeffs[0])*half
 	c_solve=coeffs[2]/coeffs[0]
-	c_solution=((b_half**2)-c_solve)**half
+	c_solution=((b_half**2)-c_solve)**0.5
 	return b_half+c_solution, b_half-c_solution
 
 eps=2.220446049250313e-16

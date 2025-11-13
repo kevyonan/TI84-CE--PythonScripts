@@ -5,8 +5,8 @@ def rkm4(f,t0,y0,tf,h):
 	half_h=0.5*h
 	while t<(tf-eps):
 		k1=h*f(t,y)
-		k2=h*f(t+half_h,y+0.5*k1)
-		k3=h*f(t+half_h,y+0.5*k2)
+		k2=h*f(t+half_h, y+0.5*k1)
+		k3=h*f(t+half_h, y+0.5*k2)
 		k4=h*f(t+h,y+k3)
 		
 		y=y+(k1+2*k2+2*k3+k4)/6

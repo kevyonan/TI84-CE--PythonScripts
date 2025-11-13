@@ -24,10 +24,8 @@ def get_str(msg,need_answer=True,invalids=[]):
 
 def get_opt_num(msg):
 	opt=0.0
-	try:
-		opt+=float(input(msg))
-	except(Exception):
-		pass
+	try: opt+=float(input(msg))
+	except Exception: pass
 	return opt
 
 def eval_csv(msg, as_tup=False):

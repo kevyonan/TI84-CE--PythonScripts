@@ -1,38 +1,25 @@
-from math import radians,degrees,atan2,cos,sin
-
-def get_opt_num(msg):
-	opt=0.0
-	try:opt+=float(input(msg))
-	except Exception:pass
-	return opt
+import math
 
 def R(ampl,ang):
-	r=radians(ang)
-	return complex(ampl*cos(r),ampl*sin(r))
+	return complex(ampl*math.cos(math.radians(ang)),ampl*math.sin(math.radians(ang)))
 
 def polar(j):
 	if not isinstance(j,complex):
 		return j,0.0
-	return (j.real**2 + j.imag**2)**0.5, degrees(atan2(j.imag,j.real))
+	return (j.real**2+j.imag**2)**0.5, math.degrees(math.atan2(j.imag,j.real))
 
-def eval_csv(msg,as_tup=False):
-	kb_str_input=input(msg)
-	kb_str_input=kb_str_input.replace(",j,",",1j,")
-	kb_str_input=kb_str_input.replace(",j",",1j")
-	kb_str_input=kb_str_input.replace("+j","+1j")
-	return eval('('+kb_str_input+')') if as_tup else eval('['+kb_str_input+']')
+def eval_csv(msg):
+	return eval('['+input(msg).replace(",j,",",1j,").replace(",j",",1j").replace("+j","+1j")+']')
 
 def get_mat():
 	mat,prev=[],0
 	while True:
-		r=eval_csv("enter row,empty to stop: ")
-		curr=len(r)
-		if curr<=0:
-			break
-		elif prev>0 and prev!=curr:
-			print("given row '{}' doesn't match prev row's size '{}'".format(prev,curr))
+		r=eval_csv("enter row, empty to stop: ")
+		if len(r)<=0: break
+		elif prev>0 and prev!=len(r):
+			print("row '{}' doesn't match prev row's len '{}'".format(prev,len(r)))
 			continue
-		prev=curr
+		prev=len(r)
 		mat.append(r)
 		print("you gave: {} | curr mat size: {}".format(r,len(mat)))
 	return mat
@@ -47,38 +34,29 @@ def swap_rows(A,i,j):
 	if i!=j: A[i],A[j]=A[j],A[i]
 
 def scale_row(A,i,factor):
-	row=A[i]
-	for c in range(len(row)): row[c]*=factor
+	for c in range(len(A[i])): A[i][c]*=factor
 
-def add_row_multiple(A,src,dst,factor):
-	src_row,dst_row=A[src],A[dst]
-	for c in range(len(src_row)): dst_row[c]+=factor*src_row[c]
+def add_mul_row(A,src,dst,factor):
+	for c in range(len(A[src])): A[dst][c]+=factor*A[src][c]
 
-def rref_inplace(A,eps=1e-9):
-	rows=len(A)
-	if rows==0: return 0
-	cols=len(A[0])
+def rref_inplace(A, eps=1e-9):
+	if len(A)==0: return 0
 	r=0
-	for c in range(cols):
+	for c in range(len(A[0])):
 		pivot=-1
 		max_abs=0.0
-		for i in range(r,rows):
-			v=A[i][c]
-			av=abs(v)
-			if av>max_abs:
-				max_abs=av
+		for i in range(r,len(A)):
+			if abs(A[i][c])>max_abs:
+				max_abs=abs(A[i][c])
 				pivot=i
 		if pivot==-1 or max_abs<eps: continue
 		swap_rows(A,r,pivot)
-		pv=A[r][c]
-		inv=1.0/pv
-		scale_row(A,r,inv)
-		for i in range(rows):
-			if i!=r:
-				factor=-A[i][c]
-				if abs(factor)>eps: add_row_multiple(A,r,i,factor)
+		scale_row(A,r,1.0/A[r][c])
+		for i in range(len(A)):
+			if i!=r and abs(-A[i][c])>eps:
+				add_mul_row(A,r,i,-A[i][c])
 		r+=1
-		if r==rows: break
+		if r==len(A): break
 
 
 def fix_up_mat(m,p=False):
@@ -90,7 +68,7 @@ def fix_up_mat(m,p=False):
 			if p:
 				ampl,ang=polar(m[row_idx][col_idx])
 				val_len=len("{:g}<{:g}".format(rnd(ampl),rnd(ang)))
-			else:val_len=len(str(m[row_idx][col_idx]))
+			else: val_len=len(str(m[row_idx][col_idx]))
 			if width<val_len: width=val_len
 		widest.append(width)
 	return widest
@@ -116,13 +94,10 @@ def run():
 	while cont:
 		mat=get_mat()
 		rref_inplace(mat)
-		p=input("print polar? 1-Y: ")=="1"
-		print(mat_to_str(mat,p))
+		print(mat_to_str(mat,input("print polar? 1-Y: ")=="1"))
 		cont=len(input("restart?: "))>0
 run()
 
-"""
-1,0,0,16-12j
-0,0,1,-14-48j
--5,3+1j,2,0
-"""
+## 1,0,0,16-12j
+## 0,0,1,-14-48j
+## -5,3+1j,2,0
